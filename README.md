@@ -38,7 +38,7 @@ A DebugLog model has been integrated to perform system health checks and facilit
 |---------|------------|
 |  Language | Python |
 |  Backend | Django / Django REST Framework |
-|  Database | MySQL (or database of choice) |
+|  Database | MySQL |
 |  Protocol | MQTT (for sensor data ingestion) |
 
 ---
