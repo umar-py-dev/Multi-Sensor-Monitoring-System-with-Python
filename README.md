@@ -38,8 +38,25 @@ A DebugLog model has been integrated to perform system health checks and facilit
 |---------|------------|
 |  Language | Python |
 |  Backend | Django / Django REST Framework |
-|  Database | MySQL (or database of choice) |
+|  Database | MySQL |
 |  Protocol | MQTT (for sensor data ingestion) |
+
+---
+## 🛢 Databse Relationships
+
+**Format: One -> Many:**
+
+    Device -> Sensors  
+    Sensor -> Data  
+    Sensor -> Alerts  
+    Device -> Debug Logs  
+
+**Relationships are based on:**
+
+> One Device has many Sensors.  
+> One Sensor has many Data points.  
+> One Sensor generates many Alerts.  
+> Debugs track overall system.
 
 ---
 
