@@ -17,3 +17,4 @@ def get_sensor_by_id(request, device_id, sensor_id):
     return Response(serializer.data)
 
 
+

@@ -53,6 +53,8 @@ CORS_ALLOW_ALL_ORIGINS = True # pemission to allow another service to request da
 CORS_ALLOW_CREDENTIALS = True #
 
 
+
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', #
     'django.middleware.security.SecurityMiddleware',

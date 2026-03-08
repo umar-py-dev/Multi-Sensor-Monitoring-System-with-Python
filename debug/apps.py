@@ -4,3 +4,6 @@ from django.apps import AppConfig
 class DebugConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'debug'
+
+    def ready(self):
+        import debug.signals

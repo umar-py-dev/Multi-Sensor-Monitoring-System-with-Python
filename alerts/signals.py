@@ -15,45 +15,46 @@ def auto_add_alerts(sender, instance, created, **kwargs):
         sensorId = instance.sensor_id
         value = instance.value
 
+        buffer = sensorId.buffer_size
+        
+
 
         try:
             # may cause error:
             max_threshold = sensorId.threshold_max_value
             min_threshold = sensorId.threshold_min_value
 
-            buffer = Decimal('50.0') 
-
-            alertMsg = ''
+            
             alert_status = ''
 
-            if value > max_threshold:
-                alertMsg = f'Value is HIGH: {value}{sensorId.unit}. Crossed the Maximum limit of {max_threshold}'
-                if value >= max_threshold + buffer:
-                    alert_status = "critical"
-                else:
-                    alert_status = "warning"
-
-
-            elif value < min_threshold:
-                alertMsg = f'Value is LOW: {value}{sensorId.unit}. Below the Minimum limit of {min_threshold}'
-                if value <= min_threshold - buffer:
-                    alert_status = "critical"
-                else:
-                    alert_status = "warning"
+            
+            if value >= max_threshold + buffer:
+                alert_status = "critical"
+            elif value <= min_threshold - buffer:
+                alert_status = "critical"
+            elif value > min_threshold and value < max_threshold:
+                pass
+            else:
+                alert_status = "warning"
 
             
 
             # agar alertMsg variable me kuch bi aa jye to "alert" ke database me data insert kr du ga
-            if alertMsg:
+            if alert_status:
                 Alerts.objects.create(
                     sensor = sensorId,
-                    sensor_data = instance,
-                    alert_msg = alertMsg,
+                    sensor_type = sensorId.sensor_type,
+                    sensor_data = value,
+                    device_id = sensorId.device_id_id,
+                    max_threshold = sensorId.threshold_max_value, 
+                    min_threshold = sensorId.threshold_min_value,
+                    alert_type = sensorId.sensor_type,
                     status = alert_status
                     )
                 
-            print("Signals.py : ", alertMsg)
+            print("Signals.py : ", value , ":", alert_status)
 
         except Exception as e:
+            
             print(e)
 
