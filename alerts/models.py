@@ -8,15 +8,15 @@ class Alerts(models.Model):
     
     # Foreign keys
     sensor = models.ForeignKey(Sensors, on_delete=models.CASCADE)
-    sensor_data = models.ForeignKey(Data, null=True, blank=True, on_delete=models.SET_NULL)
+    sensor_data = models.ForeignKey(Data, on_delete=models.CASCADE)
     
     # alert_type, threshold, status
-    alert_type = models.CharField(max_length=50)
+    alert_msg = models.CharField(max_length=100)
 
-    # alert status: active or resolved:
-    status = models.CharField(max_length=30)
+    # alert status: not_resolved or resolved:
+    status = models.CharField(max_length=30, default="not_resolved")
     
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.alert_type
+        return f"{self.sensor}:{self.status}"

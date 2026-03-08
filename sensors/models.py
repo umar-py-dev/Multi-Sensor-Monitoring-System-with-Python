@@ -12,16 +12,12 @@ class Sensors(models.Model):
     device_id = models.ForeignKey(Devices, on_delete=models.CASCADE)
 
     # threshold is different for every sensor
-    threshold_max_value = models.CharField(max_length=30, default=100)
-    threshold_min_value = models.CharField(max_length=30, default=1)
+    threshold_max_value = models.DecimalField(max_digits=10, decimal_places=3, default=100)
+    threshold_min_value = models.DecimalField(max_digits=10, decimal_places=3, default=1)
+
+    status = models.CharField(max_length=30, default='active')
     
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"{self.device_id}:{self.sensor_type}"
-    
-    
-    
-    
-    
-    

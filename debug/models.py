@@ -1,15 +1,17 @@
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import now
 # Create your models here.
 # debug_logs: Raw incoming JSON
 
 class DebugLog(models.Model):
-    log_type = models.CharField(max_length=30)
-    message = models.TextField()
-    
-    created_at = models.DateTimeField(default=timezone.now)
+    # treat 'id' as Message ID
+    topic = models.TextField()
+    payload = models.TextField()
+    response = models.TextField()
+        
+    created_at = models.DateTimeField(default=now)
     
     def __str__(self):
-        return str(self.log_type)
+        return str(self.topic)
     
     

@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
+
+from rest_framework.pagination import PageNumberPagination
 from .models import DebugLog 
 from .serializers import DebugSerializer
 
@@ -7,6 +8,11 @@ from .serializers import DebugSerializer
 def debug_log(request):
     
     dataset = DebugLog.objects.all().order_by('-created_at')
-    serialized = DebugSerializer(dataset, many=True)
+    paginator = PageNumberPagination()
+    paginator.page_size = 25
     
-    return Response(serialized.data)
+    # ye btai ga ke konsa page manga gya he:
+    result_page = paginator.paginate_queryset(dataset, request)
+    serializer = DebugSerializer(result_page, many=True)
+    
+    return paginator.get_paginated_response(serializer.data)

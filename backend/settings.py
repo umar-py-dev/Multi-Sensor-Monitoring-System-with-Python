@@ -41,14 +41,15 @@ INSTALLED_APPS = [
     'devices',
     'sensors',
     'data',
-    'alerts',
+    'alerts.apps.AlertsConfig',
     'debug',
+    'reports',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders', #
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True #
+CORS_ALLOW_ALL_ORIGINS = True # pemission to allow another service to request data 
 CORS_ALLOW_CREDENTIALS = True #
 
 
@@ -147,4 +148,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES':(
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
 }

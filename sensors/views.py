@@ -10,3 +10,10 @@ def get_sensors_by_devices(request, device_id):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+def get_sensor_by_id(request, device_id, sensor_id):
+    sensors_data = Sensors.objects.filter(device_id=device_id, id=sensor_id)
+    serializer = SensorSerializer(sensors_data, many=True)
+    return Response(serializer.data)
+
+
