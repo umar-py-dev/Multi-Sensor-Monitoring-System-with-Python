@@ -59,8 +59,8 @@ client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
 client.on_message = on_message
 
-
-client.connect('localhost', 1883, 60)
+client.username_pw_set("freeUser1", "freeUser1")
+client.connect('5ed07714471b4d5cb60646954c0c4361.s1.eu.hivemq.cloud', 8883, 60)
 
 client.subscribe('edgef/device/+/sensor/+/data')
 print('MQTT subcriber is running.... Waiting for data')
