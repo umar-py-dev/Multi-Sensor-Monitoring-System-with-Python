@@ -18,15 +18,18 @@ class get_alerts(ListAPIView):
         'status' : ['exact'],
     }
 
+from django.utils.timezone import now
+from datetime import timedelta
+
 @api_view(['GET'])
 def get_alerts_of_device(request, id):
     device_queryset = Alerts.objects.filter(device_id=id)
+
+    seven_days_ago = now() - timedelta(days=7)
     
     # Ab is filtered set par aggregation chalayein
-    device_alerts = device_queryset.aggregate(
-        total_device_alerts=Count('id'),
-        critical=Count('id', filter=Q(status__iexact='critical')),
-        warning=Count('id', filter=Q(status__iexact='warning'))
+    alerts = device_queryset.aggregate(
+        critical_last7days=Count('id', filter=Q(status__iexact='critical', created_at__gte=seven_days_ago)),
     )
     
-    return Response(device_alerts)
+    return Response(alerts)

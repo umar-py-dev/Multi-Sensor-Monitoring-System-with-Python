@@ -9,7 +9,7 @@ from .serializers import Device_serializer
 
 @api_view(['GET'])
 def get_all_devices(request):
-    devices_data = Devices.objects.all()
+    devices_data = Devices.objects.all().order_by('-created_at')
     serializer = Device_serializer(devices_data, many=True)
     return Response(serializer.data)
 

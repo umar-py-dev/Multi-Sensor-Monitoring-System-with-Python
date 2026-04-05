@@ -21,11 +21,6 @@ class Sensors(models.Model):
 
     active_timeout = models.DecimalField(max_digits=10, decimal_places=3, default=500)
 
-    # Status: for active or inactive
-    status_choices = [
-        ('active', 'Active'),
-        ('inactive', 'Inactive'),
-    ]
 
     @property
     def sensor_status(self):
