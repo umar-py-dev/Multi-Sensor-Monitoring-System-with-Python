@@ -4,28 +4,32 @@ import json
 import paho.mqtt.client as mqtt
 from django import setup
 
-# 1. Path Setup: Current directory ko path mein add karein
+# 1. Path Setup
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# 2. Django Settings Module (Apne project folder ka sahi naam check kar lein)
+# 2. Django Setup
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings') 
 setup()
 
-# Models Import (setup() ke baad hi honge)
 from data.models import Data
 from sensors.models import Sensors
 from debug.models import DebugLog
 from devices.models import Devices
 
+# --- HiveMQ Credentials (Wahi jo D1 Mini me dale hain) ---
+MQTT_BROKER = "5ed07714471b4d5cb60646954c0c4361.s1.eu.hivemq.cloud"
+MQTT_PORT = 8883
+MQTT_USER = "freeUser1" # HiveMQ Dashboard se lo
+MQTT_PASS = "freeUser1"
+
 def on_message(client, userdata, msg):
     msg_payload = None
-    topic_to_insert = msg.topic # Default in case of error
+    topic_to_insert = msg.topic
     try:
         topic_parts = msg.topic.split('/')
         device_id_in_topic = topic_parts[2]
         sens_id_in_topic = topic_parts[4]
         
-        # Device information fetch karein
         device_object = Devices.objects.filter(id=device_id_in_topic).first()
         if device_object:
             devic_type = device_object.device_type_id
@@ -44,28 +48,27 @@ def on_message(client, userdata, msg):
                 topic=topic_to_insert,
                 response='Data Inserted Successfully'
             )
-            print(f'Saved: {value_to_insert} for Sensor ID: {sens_id_in_topic}')
+            print(f'Saved: {value_to_insert} for Sensor ID: {sens_id_in_topic}', flush=True)
         else:
-            print(f'Sensor ID {sens_id_in_topic} not found.')
+            print(f'Sensor ID {sens_id_in_topic} not found.', flush=True)
 
     except Exception as err:
-        DebugLog.objects.create(
-            topic=topic_to_insert,
-            payload=msg_payload if msg_payload else {},
-            response=str(err)
-        )
-        print(f"Error: {err}")
+        print(f"Callback Error: {err}", flush=True)
 
-
-MQTT_BROKER = "5ed07714471b4d5cb60646954c0c4361.s1.eu.hivemq.cloud" # HiveMQ free for testing
-MQTT_PORT = 8883
-
+# 3. MQTT Client Setup
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+
+# TLS Settings (HiveMQ Cloud ke liye zaroori hai)
+client.tls_set() 
+
+# Authentication
+client.username_pw_set(MQTT_USER, MQTT_PASS)
+
 client.on_message = on_message
 
-# Connection
+print(f'Connecting to {MQTT_BROKER}...')
 client.connect(MQTT_BROKER, MQTT_PORT, 60)
 client.subscribe('edgef/device/+/sensor/+/data')
 
-print(f'MQTT Subscriber running on {MQTT_BROKER}... Waiting for data')
+print('MQTT Subscriber is running... (Waiting for messages)')
 client.loop_forever()
